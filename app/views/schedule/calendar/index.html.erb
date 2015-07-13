@@ -5,6 +5,7 @@
       editable: true,
       defaultView: 'month',
       header: {center: 'month,basicWeek,agendaDay'},
+      timeFormat: 'HH:mm',
       eventDrop: function(event, delta, revertFunc) {
         $.ajax({
           type: 'PUT',
