@@ -6,6 +6,9 @@
       defaultView: 'month',
       header: {center: 'month,basicWeek,agendaDay'},
       timeFormat: 'HH:mm',
+      eventClick: function(event) {
+        location.href = "<%= schedule_plans_path(@cur_org) %>/" + event.id;
+      },
       eventDrop: function(event, delta, revertFunc) {
         var start = event.start.format();
         var end = (event.end == null) ? null : event.end.format();
