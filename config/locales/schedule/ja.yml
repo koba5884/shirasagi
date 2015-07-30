@@ -14,3 +14,5 @@ ja:
       repeat_by:
         date: 日付
         week: 曜日
+    facility:
+      name: 施設名

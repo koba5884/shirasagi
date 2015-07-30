@@ -19,6 +19,13 @@ gws_admin_role = Gws::Role.create(
     delete_other_schedule_plans
     delete_private_schedule_plans
 
+    read_other_schedule_facilities
+    read_private_schedule_facilities
+    edit_other_schedule_facilities
+    edit_private_schedule_facilities
+    delete_other_schedule_facilities
+    delete_private_schedule_facilities
+
     read_other_reservation_plans
     read_private_reservation_plans
     edit_other_reservation_plans

@@ -18,6 +18,9 @@ SS::Application.routes.draw do
       get :delete, on: :member
     end
     get "calendar" => "calendar#index"
+    resources :facilities do
+      get :delete, on: :member
+    end
   end
 
   # WIP
