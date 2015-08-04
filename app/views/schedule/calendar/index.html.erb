@@ -1,4 +1,8 @@
 <%= link_to '新規登録', new_schedule_plan_path %>
+<%= form_tag '', action: :index, method: :get do %>
+  <%= text_field_tag :keyword %>
+  <%= submit_tag '検索' %>
+<% end %>
 <div id="calendar"></div>
 <script style="text/javascript">
   $(document).ready(function() {
