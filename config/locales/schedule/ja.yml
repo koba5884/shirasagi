@@ -16,3 +16,5 @@ ja:
         week: 曜日
     facility:
       name: 施設名
+    category:
+      name: スケジュール種別

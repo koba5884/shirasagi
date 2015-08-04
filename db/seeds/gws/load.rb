@@ -1,4 +1,5 @@
-gws_admin_role = Gws::Role.create(
+gws_admin_role = Gws::Role.find_or_create_by name: "GWS管理者"
+gws_admin_role.update(
   name: "GWS管理者",
   permission_level: 3,
   permissions: %w(
@@ -18,6 +19,13 @@ gws_admin_role = Gws::Role.create(
     edit_private_schedule_plans
     delete_other_schedule_plans
     delete_private_schedule_plans
+
+    read_other_schedule_categories
+    read_private_schedule_categories
+    edit_other_schedule_categories
+    edit_private_schedule_categories
+    delete_other_schedule_categories
+    delete_private_schedule_categories
 
     read_other_schedule_facilities
     read_private_schedule_facilities

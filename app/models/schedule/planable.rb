@@ -9,6 +9,7 @@ module Schedule::Planable
     field :start_at, type: DateTime
     field :end_at, type: DateTime
     field :allday, type: Boolean
+    belongs_to :category, class_name: 'Schedule::Category'
 
     validates :text, presence: true
     validates :start_at, presence: true
@@ -20,6 +21,6 @@ module Schedule::Planable
 
     validates :allday, inclusion: {in: [true, false]}
 
-    permit_params :name, :text, :start_at, :end_at, :allday
+    permit_params :name, :text, :start_at, :end_at, :allday, :category_id
   end
 end

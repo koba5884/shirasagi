@@ -5,6 +5,7 @@ FactoryGirl.define do
     start_at Time.zone.local(2015, 4, 1, 0, 0)
     end_at Time.zone.local(2015, 4, 1, 1, 0)
     allday false
+    association :category, factory: :schedule_category
 
     trait :daily do
       kind 'daily'

@@ -5,5 +5,6 @@ FactoryGirl.define do
     start_at Time.zone.local(2015, 4, 1, 0, 0)
     end_at Time.zone.local(2015, 4, 1, 0, 1)
     allday false
+    association :category, factory: :schedule_category
   end
 end

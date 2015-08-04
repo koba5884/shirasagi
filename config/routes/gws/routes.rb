@@ -21,6 +21,9 @@ SS::Application.routes.draw do
     resources :facilities do
       get :delete, on: :member
     end
+    resources :categories do
+      get :delete, on: :member
+    end
   end
 
   # WIP

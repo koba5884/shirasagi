@@ -21,6 +21,13 @@ ja:
     delete_other_schedule_plans: スケジュールの削除（全て）
     delete_private_schedule_plans: スケジュールの削除（自分）
 
+    read_other_schedule_categories: スケジュール種別の閲覧（全て）
+    read_private_schedule_categories: スケジュール種別の閲覧（自分）
+    edit_other_schedule_categories: スケジュール種別の編集（全て）
+    edit_private_schedule_categories: スケジュール種別の編集（自分）
+    delete_other_schedule_categories: スケジュール種別の削除（全て）
+    delete_private_schedule_categories: スケジュール種別の削除（自分）
+
     read_other_schedule_facilities: 施設の閲覧（全て）
     read_private_schedule_facilities: 施設の閲覧（自分）
     edit_other_schedule_facilities: 施設の編集（全て）
