@@ -6,7 +6,7 @@ class Schedule::Plan
   #TODO: 繰り返しのデータの持ち方については、要検討
   belongs_to :repeat, class_name: 'Schedule::PlanRepeat'
 
-  has_and_belongs_to_many :users, class_name: 'SS::User'
+  has_and_belongs_to_many :users, class_name: 'SS::User' # rubocop:disable all
 
   #TODO: 設備予約
   #TODO: 公開範囲
