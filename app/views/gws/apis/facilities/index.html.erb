@@ -1,0 +1,92 @@
+<%= jquery do %>
+  SS_SearchUI.modal();
+  SS_TreeUI.render("form.search .index.categories");
+
+  $("form.search .dropdown").on("click", function(e) {
+    $("form.search .index.categories").toggle();
+
+    e.preventDefault();
+    e.stopPropagation();
+    return false;
+  });
+
+  $("form.search .select-category").on("click", function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $("form.search .index.categories").hide();
+    $("#ajax-box #s_group").val($(e.target).data("id"));
+    SS_SearchUI.selectItems()
+    $("#ajax-box form.search").submit()
+    return false;
+  });
+<% end %>
+
+<div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd;">
+  <%= form_for :s, url: { action: :index }, html: { method: "GET", class: :search } do |f| %>
+    <%= hidden_field_tag :single, params[:single] %>
+    <dl class="see">
+      <dt><%= @model.t(:category_id) %></dt>
+      <dd>
+        <button class="dropdown btn" type="button"><%= tryb { @group.name } || @model.t(:category_id) %> <span class="caret">&#x25BC;</span></button>
+        <%= hidden_field_tag("s[group]", @group.try(:id)) %>
+        <table class="index categories pulldown-index">
+          <tbody>
+          <tr data-depth="1" class="toggle">
+            <td class="expandable">
+              <%= link_to @model.t(:category_id), "#", class: "select-category" %>
+            </td>
+          </tr>
+          <% @groups.each do |item| %>
+            <tr data-depth="<%= item.depth + 1 %>" class="toggle">
+              <td class="expandable">
+                <% if item.id.present? %>
+                  <%= link_to item.name, "#", class: "select-category", data: { id: item.id } %>
+                <% else %>
+                  <%= item.name %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </dd>
+
+      <dt><%= @model.t :name %></dt>
+      <dd>
+        <%= f.text_field :keyword, value: params[:s].try(:[], :keyword) %>
+        <%= f.submit  t("views.button.search"), class: :btn %>
+      </dd>
+    </dl>
+  <% end %>
+</div>
+
+<table class="index">
+  <thead class="list-head">
+    <tr>
+      <% if @multi %>
+      <th class="checkbox"><input type="checkbox" /></th>
+      <% end %>
+      <th class="name"><%= @model.t :name %></th>
+    </tr>
+  </thead>
+  <tbody class="items">
+    <% @items.each do |item| %>
+      <tr data-id="<%= item.id %>" class="list-item">
+        <% if @multi %>
+        <td class="checkbox">
+          <input type="checkbox" name="ids[]" value="<%= item.id %>" />
+        </td>
+        <% end %>
+        <td><%= link_to item.name, "#", class: @multi ? "select-item" : "select-single-item" %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% if @multi %>
+<div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd;">
+  <%= button_tag t("views.links.select"), { type: :button, class: "select-items btn" } %>
+</div>
+<% end %>
+
+<%= paginate @items if @items.try(:current_page) %>

@@ -11,19 +11,20 @@ class Gws::PortalController < ApplicationController
     def index
       items_limit = 5
 
+      @links = Gws::Link.site(@cur_site).and_public.
+        readable(@cur_user, @cur_site, exclude_role: true).to_a
+
       @notices = Gws::Notice.site(@cur_site).and_public.
-        target_to(@cur_user).
+        readable(@cur_user, @cur_site, exclude_role: true).
         page(1).per(items_limit)
 
-      # TODO: Use reminder collection
-      @plans = Gws::Schedule::Plan.site(@cur_site).
-        member(@cur_user).
-        where(:end_at.gte => Time.zone.now).
-        order_by(end_at: 1, start_at: 1).
+      @reminders = Gws::Reminder.site(@cur_site).
+        user(@cur_user).
         page(1).per(items_limit)
 
-      @boards = Gws::Board::Post.site(@cur_site).topic.
-        target_to(@cur_user).
+      @boards = Gws::Board::Topic.site(@cur_site).topic.
+        and_public.
+        readable(@cur_user, @cur_site).
         order(descendants_updated: -1).
         page(1).per(items_limit)
     end

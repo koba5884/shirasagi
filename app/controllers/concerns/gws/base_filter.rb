@@ -23,12 +23,12 @@ module Gws::BaseFilter
     def set_current_site
       @ss_mode = :gws
       @cur_site = Gws::Group.find params[:site]
+      @cur_user.cur_site = @cur_site
       @crumbs << [@cur_site.name, gws_portal_path]
     end
 
     def set_current_group
-      cur_groups = @cur_user.groups.in(name: /^#{@cur_site.name}(\/|$)/)
-      @cur_group = cur_groups.first # select one group
+      @cur_group = @cur_user.gws_default_group
       raise "403" unless @cur_group
     end
 

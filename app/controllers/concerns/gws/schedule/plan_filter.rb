@@ -18,7 +18,8 @@ module Gws::Schedule::PlanFilter
     end
 
     def pre_params
-      { member_ids: [@cur_user.id], start_at: params[:start] }
+      @skip_default_group = true
+      { member_ids: [@cur_user.id], start_at: params[:start] || Time.zone.now.strftime('%Y/%m/%d %H:00') }
     end
 
   public
@@ -27,12 +28,21 @@ module Gws::Schedule::PlanFilter
     end
 
     def show
-      raise "403" if !@item.allowed?(:read, @cur_user, site: @cur_site) && !@item.targeted?(@cur_user)
+      raise '403' unless @item.readable?(@cur_user)
       render
+    end
+
+    def events
+      @items = []
     end
 
     def popup
       set_item
-      render file: "popup", layout: false
+
+      if @item.readable?(@cur_user)
+        render file: "popup", layout: false
+      else
+        render file: "popup_hidden", layout: false
+      end
     end
 end

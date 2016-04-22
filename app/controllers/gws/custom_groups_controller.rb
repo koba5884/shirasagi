@@ -11,6 +11,10 @@ class Gws::CustomGroupsController < ApplicationController
       @crumbs << [:"mongoid.models.gws/custom_group", gws_custom_groups_path]
     end
 
+    def pre_params
+      { user_ids: [@cur_user.id] }
+    end
+
     def fix_params
       { cur_user: @cur_user, cur_site: @cur_site }
     end
@@ -20,7 +24,6 @@ class Gws::CustomGroupsController < ApplicationController
       @items = @model.site(@cur_site).
         allow(:read, @cur_user, site: @cur_site).
         search(params[:s]).
-        order_by(order: 1).
         page(params[:page]).per(50)
     end
 end

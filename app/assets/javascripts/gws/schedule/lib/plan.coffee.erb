@@ -1,9 +1,19 @@
 class @Gws_Schedule_Plan
-  @diffOn: 0
+  @diffOn: 3600000
 
-  @renderForm: ->
-    $(".date").datetimepicker({ lang: "ja", timepicker: false, format:'Y/m/d', closeOnDateSelect: true, scrollInput: false })
-    $(".datetime").datetimepicker({ lang: "ja", roundTime: 'ceil', step: 30 })
+  @renderForm: (opts = {})->
+    $(".date").datetimepicker
+      lang: "ja"
+      timepicker: false
+      format:'Y/m/d'
+      closeOnDateSelect: true
+      scrollInput: false
+      maxDate: opts["maxDate"]
+    $(".datetime").datetimepicker
+      lang: "ja"
+      roundTime: 'ceil'
+      step: 30
+      maxDate: opts["maxDate"]
     @relateDateForm()
     @relateDateTimeForm()
 
@@ -42,17 +52,21 @@ class @Gws_Schedule_Plan
     $(start_sel).change ->
       start = $(start_sel).val()
       return unless start
+      start = (new Date(start)).getTime()
+      return if isNaN(start)
       date = new Date()
-      date.setTime((new Date(start)).getTime() + Gws_Schedule_Plan.diffOn)
+      date.setTime(start + Gws_Schedule_Plan.diffOn)
       format = '%d/%02d/%02d'
       format = '%d/%02d/%02d %02d:%02d' if $(start_sel).hasClass('datetime')
       $(end_sel).val(sprintf(format, date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes()))
+    if $(end_sel).val() == ""
+      $(start_sel).change()
 
   @relateDateTimeForm: ->
     @relateDateForm('.datetime.start', '.datetime.end')
 
   @diffDates: (src, dst)->
-    return 0 if !src || !dst
+    return 1000 * 60 * 60 if !src || !dst
     diff = (new Date(dst)).getTime() - (new Date(src)).getTime();
     return 0 if diff < 0
     diff

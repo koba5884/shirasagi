@@ -7,7 +7,7 @@ class Gws::Workflow::SearchApproversController < ApplicationController
 
   private
     def group_id
-      default_group_id = @cur_user.group_ids.first
+      default_group_id = @cur_user.groups.in_group(@cur_site).map(&:id).first
       return default_group_id if params[:s].blank?
       return default_group_id if params[:s][:group].blank?
 
@@ -32,8 +32,8 @@ class Gws::Workflow::SearchApproversController < ApplicationController
       @level = params[:level]
       @group_id = group_id
       @group_options = group_options
-      criteria = @model.site(@cur_site).search(params[:s])
+      criteria = @model.site(@cur_site).active.search(params[:s])
       criteria = criteria.in(group_ids: [ @group_id ]) if @group_id
-      @items = criteria.order_by(_id: 1).page(params[:page]).per(50)
+      @items = criteria.order_by_title(@cur_site).page(params[:page]).per(50)
     end
 end

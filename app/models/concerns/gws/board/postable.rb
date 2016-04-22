@@ -4,12 +4,13 @@ module Gws::Board::Postable
   include SS::Document
   include Gws::Reference::User
   include Gws::Reference::Site
-  include Gws::Content::Targetable
   include Gws::GroupPermission
 
   included do
     store_in collection: "gws_board_posts"
     set_permission_name "gws_board_posts"
+
+    attr_accessor :cur_site
 
     seqid :id
     field :state, type: String, default: 'public'
@@ -17,7 +18,8 @@ module Gws::Board::Postable
     field :mode, type: String, default: 'thread'
     field :permit_comment, type: String, default: 'allow'
     field :descendants_updated, type: DateTime
-    field :descendants_files_count, type: Integer
+
+    validates :descendants_updated, datetime: true
 
     belongs_to :topic, class_name: "Gws::Board::Post", inverse_of: :descendants
     belongs_to :parent, class_name: "Gws::Board::Post", inverse_of: :children
@@ -37,10 +39,7 @@ module Gws::Board::Postable
 
     validate :validate_comment, if: :comment?
 
-    before_save :set_files_count, if: -> { topic_id.blank? }
     before_save :set_descendants_updated, if: -> { topic_id.blank? }
-
-    after_save :update_topic_descendants_files_count, if: -> { topic_id.present? }
     after_save :update_topic_descendants_updated, if: -> { topic_id.present? }
 
     scope :topic, ->{ exists parent_id: false }
@@ -50,6 +49,11 @@ module Gws::Board::Postable
       return criteria if params.blank?
 
       criteria = criteria.keyword_in params[:keyword], :name, :text if params[:keyword].present?
+
+      if params[:category].present?
+        category_ids = Gws::Board::Category.site(params[:site]).and_name_prefix(params[:category]).pluck(:id)
+        criteria = criteria.in(category_ids: category_ids)
+      end
       criteria
     }
   end
@@ -69,7 +73,7 @@ module Gws::Board::Postable
   end
 
   def new_flag?
-    descendants_updated > Time.zone.now - 7.day #TODO: Use setting.
+    descendants_updated > Time.zone.now - site.board_new_days.day
   end
 
   def mode_options
@@ -101,29 +105,15 @@ module Gws::Board::Postable
     # 最新レス投稿日時の初期値をトピックのみ設定
     # 明示的に age るケースが発生するかも
     def set_descendants_updated
-      return unless new_record?
+      #return unless new_record?
       self.descendants_updated = updated
     end
 
-    # 最新レス投稿日時をトピックに設定
+    # 最新レス投稿日時、レス更新日時をトピックに設定
     # 明示的に age るケースが発生するかも
     def update_topic_descendants_updated
       return unless topic
-      return unless _id_changed?
+      #return unless _id_changed?
       topic.set descendants_updated: updated
-    end
-
-    def count_topic_files(topic)
-      count = topic.file_ids.size
-      count + self.class.topic_comments(topic).map { |m| m.file_ids.size }.inject(0) { |sum, i| sum + i }
-    end
-
-    def set_files_count
-      self.descendants_files_count = count_topic_files(self)
-    end
-
-    def update_topic_descendants_files_count
-      return unless topic
-      topic.set descendants_files_count: count_topic_files(topic)
     end
 end
